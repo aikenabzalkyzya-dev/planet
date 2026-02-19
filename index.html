@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Planets</title>
+<style>
+body{
+  margin:0;
+  background:black;
+  color:white;
+  font-family: Arial, Helvetica, sans-serif;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:50px;
+}
+nav{
+  width:100%;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:20px 40px;
+  border-bottom:1px solid gray;
+}
+.logo h1{
+  font-size:30px;
+}
+.nav2{
+  display:flex;
+  gap:15px;
+}
+.nav2 p{
+  cursor:pointer;
+  padding:5px 10px;
+  transition:0.3s;
+  border-radius:5px;
+}
+.nav2 p:hover{
+  background:gray;
+}
+.nav2 p.active{
+  background:navy;
+}
+.center{
+  width:100%;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+}
+.planet{
+  display:flex;
+  flex-direction:column;
+  gap:50px;
+  align-items:center;
+  opacity:0;
+  animation: fadeIn 0.5s forwards;
+}
+@keyframes fadeIn{
+  to{opacity:1;}
+}
+.imgInfo{
+  display:flex;
+  gap:50px;
+  align-items:center;
+  flex-wrap:wrap;
+}
+.imgInfo img{
+  width:300px;
+  height:300px;
+  object-fit:cover;
+  border-radius:10px;
+  transition:0.3s;
+}
+.imgInfo img:hover{
+  transform:scale(1.1);
+}
+.info{
+  display:flex;
+  flex-direction:column;
+  gap:15px;
+  max-width:500px;
+}
+.info h1{
+  font-size:50px;
+  font-weight:bold;
+}
+.info p{
+  color:#ccc;
+  font-size:18px;
+}
+.boxes{
+  display:flex;
+  gap:20px;
+  flex-wrap:wrap;
+  justify-content:center;
+}
+.box{
+  border:1px solid gray;
+  padding:15px;
+  width:180px;
+  text-align:center;
+}
+.box span{
+  font-size:14px;
+  color:#888;
+}
+.box h1{
+  font-size:20px;
+  margin-top:5px;
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="logo">
+    <h1>THE PLANETS</h1>
+  </div>
+  <div class="nav2">
+    <p>Mercury</p>
+    <p>Venus</p>
+    <p>Earth</p>
+    <p>Mars</p>
+    <p>Jupiter</p>
+    <p>Saturn</p>
+    <p>Uranus</p>
+    <p>Neptune</p>
+  </div>
+</nav>
+
+<div class="center"></div>
+
+<script>
+const center = document.querySelector(".center");
+const buttons = document.querySelectorAll(".nav2 p");
+let data = {};
+
+async function loadData(){
+  const res = await fetch("./data.json");
+  data = await res.json();
+}
+function renderPlanet(planetName){
+  const planet = data[planetName.toLowerCase()];
+  if(!planet) return;
+
+  // remove previous active
+  buttons.forEach(btn=>btn.classList.remove("active"));
+  const activeBtn = Array.from(buttons).find(b=>b.textContent === planetName);
+  if(activeBtn) activeBtn.classList.add("active");
+
+  center.innerHTML = `
+    <div class="planet">
+      <div class="imgInfo">
+        <img src="${planet.images.planet}" />
+        <div class="info">
+          <h1>${planet.name}</h1>
+          <p>${planet.overview.content}</p>
+          <p>Source: Wikipedia</p>
+        </div>
+      </div>
+      <div class="boxes">
+        <div class="box">
+          <span>ROTATION TIME</span>
+          <h1>${planet.rotation}</h1>
+        </div>
+        <div class="box">
+          <span>REVOLUTION TIME</span>
+          <h1>${planet.revolution}</h1>
+        </div>
+        <div class="box">
+          <span>RADIUS</span>
+          <h1>${planet.radius}</h1>
+        </div>
+        <div class="box">
+          <span>AVERAGE TEMP</span>
+          <h1>${planet.temperature}</h1>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+buttons.forEach(btn=>{
+  btn.addEventListener("click",()=>renderPlanet(btn.textContent));
+});
+
+loadData();
+</script>
+
+</body>
+</html>
