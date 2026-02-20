@@ -143,8 +143,7 @@ async function loadData(){
 function renderPlanet(planetName){
   const planet = data[planetName.toLowerCase()];
   if(!planet) return;
-
-  // remove previous active
+  
   buttons.forEach(btn=>btn.classList.remove("active"));
   const activeBtn = Array.from(buttons).find(b=>b.textContent === planetName);
   if(activeBtn) activeBtn.classList.add("active");
